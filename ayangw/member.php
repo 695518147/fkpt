@@ -5,6 +5,10 @@ $my=isset($_GET['my'])?$_GET['my']:null;
 
 $clientip=real_ip();
 
+foreach ($_COOKIE as $key => $val){
+    wsyslog("cookie的值".$key , $val);
+}
+
 if(isset($_COOKIE["admin_token"]))
 {
 	$token=authcode(daddslashes($_COOKIE['admin_token']), 'DECODE', SYS_KEY);
@@ -17,5 +21,3 @@ if(isset($_COOKIE["admin_token"]))
 	}
 }
 
-
-?>
