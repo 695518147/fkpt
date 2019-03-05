@@ -1,8 +1,7 @@
 ﻿<?php
-/**
- * 登录
- **/
+session_start();
 $verifycode = 0;//验证码开关
+
 
 if (!function_exists("imagecreate") || !file_exists('code.php')) $verifycode = 0;
 include '../ayangw/common.php';
@@ -17,10 +16,9 @@ if (isset($_POST['user']) && isset($_POST['pass'])) {
         exit("<script language='javascript'>alert('验证码错误！');history.go(-1);</script>");
     } elseif ($user == $conf['admin'] && $pass == $conf['pwd']) {
         unset($_SESSION['vc_code']);
-        $session = md5($user . $pass . $password_hash);
-        $token = authcode("{$user}\t{$session}", 'ENCODE', SYS_KEY);
+        $token = md5($user . $pass . $password_hash);
         setcookie("admin_token", $token, time() + 604800);
-        wsyslog("设置admin_token!", isset($_COOKIE["admin_token"]));
+
         wsyslog("登陆后台成功!", "登陆IP:" . real_ip() . ",城市:" . get_ip_city(real_ip()));
         @header('Content-Type: text/html; charset=UTF-8');
         exit("<script language='javascript'>alert('登陆管理中心成功！');window.location.href='./';</script>");
@@ -29,8 +27,9 @@ if (isset($_POST['user']) && isset($_POST['pass'])) {
         @header('Content-Type: text/html; charset=UTF-8');
         exit("<script language='javascript'>alert('用户名或密码不正确！');history.go(-1);</script>");
     }
-} elseif (isset($_GET['logout'])) {
-    setcookie("admin_token", "", time() - 604800);
+} elseif (isset($_GET['act'])) {
+    setcookie("admin_token", null, time() - 604800);
+    $islogin = 0;
     @header('Content-Type: text/html; charset=UTF-8');
     exit("<script language='javascript'>alert('您已成功注销本次登陆！');window.location.href='./login.php';</script>");
 } elseif ($islogin == 5) {
